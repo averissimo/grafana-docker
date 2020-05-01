@@ -37,19 +37,19 @@ jobs:
 
         docker buildx create --use --driver docker-container
 
-        docker buildx build \
-          --pull \
-          --build-arg GRAFANA_VERSION=master \
-          --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource \
-          --platform  linux/amd64,linux/arm/v7,linux/arm/v6 \
-          --output "type=image,push=true" \
-          --tag betashil/grafana:latest \
-          --file Dockerfile .
+        #docker buildx build \
+        #  --pull \
+        #  --build-arg GRAFANA_VERSION=master \
+        #  --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource \
+        #  --platform  linux/amd64,linux/arm/v7,linux/arm/v6 \
+        #  --output "type=image,push=true" \
+        #  --tag betashil/grafana:latest \
+        #  --file Dockerfile .
     - name: Build
       run: |
         ls
         cd repo
-        docker build --pull . -f Dockerfile.build -t betashil/grafana
+        docker build --pull . -f Dockerfile -t betashil/grafana
     - name: Push
       run: |
         docker login --username "${{ secrets.DOCKER_HUB_USER }}" --password "${{ secrets.DOCKER_HUB_PASSWORD }}"
