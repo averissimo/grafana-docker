@@ -49,7 +49,11 @@ jobs:
       run: |
         ls
         cd repo
-        docker build --pull . -f Dockerfile -t betashil/grafana
+        docker build --pull \
+          --build-arg GRAFANA_VERSION=master \
+          --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource \
+          --file Dockerfile \
+          --tag betashil/grafana .
     - name: Push
       run: |
         docker login --username "${{ secrets.DOCKER_HUB_USER }}" --password "${{ secrets.DOCKER_HUB_PASSWORD }}"
