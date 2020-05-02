@@ -30,7 +30,7 @@ jobs:
         echo "${{ secrets.HUB_PASS }}" | docker login --username "${{ secrets.HUB_USER }}" --password-stdin
     - name: Build
       run: |
-        cd repo
+        cd repo/packaging/docker/custom
         sed -i 's/RUN yarn/RUN apk add --update python python-dev py-pip build-base \&\& \\\n  echo "network-timeout 600000" >> .yarnrc \&\& \\\n  yarn/g' Dockerfile
         ls
 
@@ -50,7 +50,7 @@ jobs:
     - name: Build
       run: |
         ls
-        cd repo
+        cd repo/packaging/docker/custom
         docker build --pull \
           --build-arg GRAFANA_VERSION=master \
           --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource \
