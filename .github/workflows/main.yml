@@ -46,7 +46,3 @@ jobs:
           --output "type=image,push=true" \
           --tag betashil/grafana:latest \
           --file Dockerfile .
-    - name: Push
-      run: |
-        docker login --username "${{ secrets.DOCKER_HUB_USER }}" --password "${{ secrets.DOCKER_HUB_PASSWORD }}"
-        docker push betashil/grafana
