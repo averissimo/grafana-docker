@@ -31,7 +31,6 @@ jobs:
     - name: Build
       run: |
         cd repo/packaging/docker/custom
-        #sed -i 's/RUN yarn/RUN apk add --update python python-dev py-pip build-base \&\& \\\n  echo "network-timeout 600000" >> .yarnrc \&\& \\\n  yarn/g' Dockerfile
         ls
 
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
@@ -43,19 +42,10 @@ jobs:
           --pull \
           --build-arg GRAFANA_VERSION=master \
           --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource \
-          --platform  linux/arm/v7 \
+          --platform  linux/amd64,linux/arm64,linux/386,linux/arm/v7,linux/arm/v6 \
           --output "type=image,push=true" \
           --tag betashil/grafana:latest \
           --file Dockerfile .
-    - name: Build
-      run: |
-        ls
-        cd repo/packaging/docker/custom
-        docker build --pull \
-          --build-arg GRAFANA_VERSION=master \
-          --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource \
-          --file Dockerfile \
-          --tag betashil/grafana .
     - name: Push
       run: |
         docker login --username "${{ secrets.DOCKER_HUB_USER }}" --password "${{ secrets.DOCKER_HUB_PASSWORD }}"
