@@ -41,7 +41,7 @@ jobs:
           --progress=plain \
           --pull \
           --build-arg GRAFANA_VERSION=master \
-          --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource \
+          --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource,grafana-image-renderer \
           --platform  linux/amd64,linux/arm64,linux/arm/v7 \
           --output "type=image,push=true" \
           --tag betashil/grafana:latest \
