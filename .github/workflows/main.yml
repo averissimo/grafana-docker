@@ -17,7 +17,7 @@ jobs:
       with:
         path: repo
         repository: grafana/grafana
-        ref: ${{ RELEASE }}
+        ref: $RELEASE
     - name: verbose
       run: |
         docker -v
