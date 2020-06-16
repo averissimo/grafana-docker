@@ -12,13 +12,16 @@ jobs:
       run: |
         echo "Trying to setup release variable"
 
-        export RELEASE_VERSION=$(curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
+        export TMPREL=$(curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
         
-        echo $RELEASE_VERSION
+        echo $TMPREL
 
-        echo '::set-env name=RELEASE::$RELEASE_VERSION'
+        echo '::set-env name=RELEASE::$TMPREL'
+    - name: Env
+      env: 
+        REL: ${{ echo "133"  }}
     - name: checking env
-      run: echo "$RELEASE ${{ env.RELEASE }}"
+      run: echo "$RELEASE ${{ env.RELEASE }} $REL ${{ env.REL }}"
     - name: Checkout current repo
       uses: actions/checkout@v2
       with:
