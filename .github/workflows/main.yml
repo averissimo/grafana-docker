@@ -17,6 +17,8 @@ jobs:
         echo $RELEASE_VERSION
 
         echo '::set-env name=RELEASE::$RELEASE_VERSION'
+    - name: checking env
+      run: echo "$RELEASE ${{ env.RELEASE }}"
     - name: Checkout current repo
       uses: actions/checkout@v2
       with:
