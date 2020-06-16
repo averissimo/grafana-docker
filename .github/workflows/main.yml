@@ -12,8 +12,8 @@ jobs:
       run: |
         export RELEASE_VERSION=$(curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')a
         
-        core.exportVariable('RELEASE', $RELEASE_VERSION)
-
+        echo '::set-env name=RELEASE::$RELEASE_VERSION'
+        
         echo $RELEASE
 
         echo ${{ env.RELEASE }}
