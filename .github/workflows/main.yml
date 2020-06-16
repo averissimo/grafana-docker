@@ -10,14 +10,15 @@ jobs:
     steps:
     - name: Get latest release
       run: |
-        export RELEASE=$(curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
+        export RELEASE=$(curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')a
+
         echo $RELEASE
     - name: Checkout current repo
       uses: actions/checkout@v2
       with:
         path: repo
         repository: grafana/grafana
-        ref: $RELEASE
+        ref: ${RELEASE}
     - name: verbose
       run: |
         docker -v
