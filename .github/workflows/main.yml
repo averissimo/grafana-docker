@@ -10,13 +10,13 @@ jobs:
     steps:
     - name: Get latest release
       run: |
+        echo "Trying to setup release variable"
+
         export RELEASE_VERSION=$(curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
         
-        echo '::set-env name=RELEASE::$RELEASE_VERSION'
-        
-        echo $RELEASE
+        echo $RELEASE_VERSION
 
-        echo ${{ env.RELEASE }}
+        echo '::set-env name=RELEASE::$RELEASE_VERSION'
     - name: Checkout current repo
       uses: actions/checkout@v2
       with:
