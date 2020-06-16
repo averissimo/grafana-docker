@@ -13,7 +13,7 @@ jobs:
       with:
         path: repo
         repository: grafana/grafana
-
+        retf: $(curl -s GET https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
     - name: verbose
       run: |
         docker -v
@@ -31,7 +31,7 @@ jobs:
     - name: Build
       run: |
         cd repo
-        git checkout $(curl -s GET https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
+        # git checkout $(curl -s GET https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
         cd packaging/docker/custom
         ls
 
