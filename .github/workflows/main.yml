@@ -16,11 +16,9 @@ jobs:
         
         echo $TMPREL
 
-        echo '::set-env name=RELEASE::$TMPREL'
+        echo "::set-env name=RELEASE::$TMPREL"
     - name: checking env
       run: echo "$RELEASE ${{ env.RELEASE }} $REL ${{ env.REL }}"
-      env: 
-        REL: ${{ echo "133"  }}
     - name: Checkout current repo
       uses: actions/checkout@v2
       with:
