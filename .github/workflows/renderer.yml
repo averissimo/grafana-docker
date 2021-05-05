@@ -12,7 +12,7 @@ jobs:
       run: |
         echo "Trying to setup release variable"
 
-        export TMPREL=$(curl -s https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
+        export TMPREL=$(curl -s https://api.github.com/repos/grafana/grafana-image-renderer/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
         
         echo "RELEASE=$TMPREL" >> $GITHUB_ENV
     - name: Checkout current repo
@@ -49,7 +49,7 @@ jobs:
         docker buildx build \
           --progress=plain \
           --pull \
-          --platform  linux/amd64,linux/arm64,linux/arm/v7,linux/arm64 \
+          --platform  linux/amd64,linux/arm64,linux/arm/v7 \
           --output "type=image,push=true" \
           --tag betashil/grafana-image-renderer:latest \
           --file Dockerfile .
