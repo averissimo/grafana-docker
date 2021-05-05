@@ -10,45 +10,31 @@ jobs:
     runs-on: ubuntu-latest
     name: Build/Push Docker
     steps:
-    - name: Get latest release
+    - name: Set Environment Variables
       run: |
-        echo "Trying to setup release variable"
-
-        export TMPREL=$(curl -s https://api.github.com/repos/grafana/grafana-image-renderer/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
-
-        echo "RELEASE=$TMPREL" >> $GITHUB_ENV
+        export RELEASE=$(curl -s https://api.github.com/repos/grafana/grafana-image-renderer/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
+        echo "RELEASE=$RELEASE" >> $GITHUB_ENV
+        echo "PLATFORM=linux/amd64,linux/arm64,linux/arm/v7" >> $GITHUB_ENV
+        echo "DOCKERHUB_SLUG=$(echo ${{ secrets.HUB_USER }} | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
     - name: Checkout current repo
       uses: actions/checkout@v2
       with:
-        path: repo
         repository: grafana/grafana-image-renderer
         ref: ${{ env.RELEASE }}
-    - name: Docker login
-      run: |
-        echo "${{ secrets.HUB_PASS }}" | docker login --username "${{ secrets.HUB_USER }}" --password-stdin
+    - name: Login to Dockerhub
+      uses: docker/login-action@v1
+      with:
+        username: ${{ secrets.HUB_USER }}
+        password: ${{ secrets.HUB_PASS }}
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v1
     - name: Set up Docker Buildx
       id: buildx
       uses: docker/setup-buildx-action@v1
-    - name: Inspect builder
-      run: |
-        echo "Name:      ${{ steps.buildx.outputs.name }}"
-        echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
-        echo "Status:    ${{ steps.buildx.outputs.status }}"
-        echo "Flags:     ${{ steps.buildx.outputs.flags }}"
-        echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
-    - name: inspect
-      run: |
-        docker buildx inspect --bootstrap
-    - name: Build
-      run: |
-        cd repo
-        ls
-        docker buildx build \
-          --progress=plain \
-          --pull \
-          --platform  linux/amd64,linux/arm64,linux/arm/v7 \
-          --output "type=image,push=true" \
-          --tag betashil/grafana-image-renderer:latest \
-          --file Dockerfile .
+    - name: Build and push
+      uses: docker/build-push-action@v2
+      with:
+        platforms: ${{ env.PLATFORM }}
+        push: true
+        tags: |
+            ${{ env.DOCKERHUB_SLUG }}/grafana-image-renderer:latest
