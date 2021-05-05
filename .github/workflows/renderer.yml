@@ -19,7 +19,7 @@ jobs:
       uses: actions/checkout@v2
       with:
         path: repo
-        repository: grafana/grafana
+        repository: grafana/grafana-image-renderer
         ref: ${{ env.RELEASE }}
     - name: verbose
       run: |
@@ -49,9 +49,7 @@ jobs:
         docker buildx build \
           --progress=plain \
           --pull \
-          --build-arg GRAFANA_VERSION=master \
-          --build-arg GF_INSTALL_PLUGINS=grafana-clock-panel,briangann-gauge-panel,natel-plotly-panel,grafana-simple-json-datasource \
           --platform  linux/amd64,linux/arm64,linux/arm/v7,linux/arm64 \
           --output "type=image,push=true" \
-          --tag betashil/grafana:latest \
+          --tag betashil/grafana-image-renderer:latest \
           --file Dockerfile .
