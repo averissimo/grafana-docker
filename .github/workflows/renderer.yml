@@ -3,7 +3,7 @@ on:
   schedule:
     - cron: '12 7 * * 1/3'
 
-jobs: 
+jobs:
   build_docker:
     runs-on: ubuntu-latest
     name: Build/Push Docker
@@ -13,7 +13,7 @@ jobs:
         echo "Trying to setup release variable"
 
         export TMPREL=$(curl -s https://api.github.com/repos/grafana/grafana-image-renderer/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
-        
+
         echo "RELEASE=$TMPREL" >> $GITHUB_ENV
     - name: Checkout current repo
       uses: actions/checkout@v2
@@ -21,33 +21,30 @@ jobs:
         path: repo
         repository: grafana/grafana-image-renderer
         ref: ${{ env.RELEASE }}
-    - name: verbose
-      run: |
-        docker -v
-        export DOCKER_CLI_EXPERIMENTAL=enabled
-    - name: Set up Docker Buildx
-      id: buildx
-      uses: crazy-max/ghaction-docker-buildx@v1
-      with:
-        version: latest
-    - name: Available platforms
-      run: echo ${{ steps.buildx.outputs.platforms }}
     - name: Docker login
       run: |
         echo "${{ secrets.HUB_PASS }}" | docker login --username "${{ secrets.HUB_USER }}" --password-stdin
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v1
+    - name: Set up Docker Buildx
+      id: buildx
+      uses: docker/setup-buildx-action@v1
+    - name: Inspect builder
+      run: |
+        echo "Name:      ${{ steps.buildx.outputs.name }}"
+        echo "Endpoint:  ${{ steps.buildx.outputs.endpoint }}"
+        echo "Status:    ${{ steps.buildx.outputs.status }}"
+        echo "Flags:     ${{ steps.buildx.outputs.flags }}"
+        echo "Platforms: ${{ steps.buildx.outputs.platforms }}"
+    - name: inspect
+      run: |
+        docker buildx inspect --bootstrap
     - name: Build
       run: |
         cd repo
         ls
-
-        docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
-
-        docker buildx create --use --driver docker-container
-
         docker buildx build \
-          --progress=plain \
-          --pull \
-          --platform  linux/amd64,linux/arm64,linux/arm/v7 \
+          --platform  linux/amd64,linux/arm64,linux/arm/v7,linux/arm/v6 \
           --output "type=image,push=true" \
           --tag betashil/grafana-image-renderer:latest \
           --file Dockerfile .
