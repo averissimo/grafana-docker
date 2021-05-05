@@ -1,5 +1,7 @@
 on:
   push:
+    paths:
+      - '.github/workflows/touch_git.yml'
   schedule:
     - cron: '1 4 1 * *'
 

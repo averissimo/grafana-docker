@@ -1,5 +1,7 @@
 on:
   push:
+    paths:
+      - '.github/workflows/renderer.yml'
   schedule:
     - cron: '12 7 * * 5'
 
