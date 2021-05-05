@@ -38,7 +38,6 @@ jobs:
     - name: Build
       run: |
         cd repo
-        # git checkout $(curl -s GET https://api.github.com/repos/grafana/grafana/releases/latest | grep -Po '"tag_name": ".*"' | sed -E 's/"tag_name": "(.*)"/\1/g' | sed 's/\n//g')
         ls
 
         docker run --rm --privileged multiarch/qemu-user-static --reset -p yes
@@ -51,4 +50,4 @@ jobs:
           --platform  linux/amd64,linux/arm64,linux/arm/v7 \
           --output "type=image,push=true" \
           --tag betashil/grafana-image-renderer:latest \
-          --file debian.Dockerfile .
+          --file Dockerfile .
