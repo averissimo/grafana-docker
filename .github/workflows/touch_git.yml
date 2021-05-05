@@ -1,0 +1,24 @@
+on:
+  push:
+  schedule:
+    - cron: '1 4 1 * *'
+
+jobs:
+  build_docker:
+    runs-on: ubuntu-latest
+    name: Build/Push Docker
+    steps:
+    - name: Checkout current repo
+      uses: actions/checkout@v2
+    - name: Set credentials
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+    - name: Add date to keep_alive file
+      run: |
+        echo $(date) >> keep_alive.txt
+        git commit -a -m "Updating keep alive"
+    - name: Push changes
+      uses: ad-m/github-push-action@fe38f0a751bf9149f0270cc1fe20bf9156854365
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
