@@ -44,7 +44,9 @@ jobs:
         cd repo
         ls
         docker buildx build \
-          --platform  linux/amd64,linux/arm64 \
+          --progress=plain \
+          --pull \
+          --platform  linux/amd64,linux/arm64,linux/arm/v7 \
           --output "type=image,push=true" \
           --tag betashil/grafana-image-renderer:latest \
           --file Dockerfile .
